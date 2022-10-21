@@ -1,1 +1,3 @@
- # TODO
+ # Stock Ticker App
+ 
+ - 
