@@ -1,10 +1,10 @@
 import os
 from flask import Flask, render_template
 
-from StockTickerApp.api import blueprint
-from StockTickerApp.login import uri
-from StockTickerApp.models import db, TickerClass
-from StockTickerApp.data_loader import data_importer
+from api import blueprint
+from login import uri
+from models import db, TickerClass
+from data_loader import data_importer
 
 # App
 app = Flask(__name__)
@@ -44,5 +44,5 @@ if __name__ == '__main__':
     export FLASK_APP=StockTickerApp/app.py
     export FLASK_DEBUG=1    
     export FLASK_RUN_PORT=4444
-    flask load-data 
+    flask run
     """

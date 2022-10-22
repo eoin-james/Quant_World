@@ -2,52 +2,45 @@
 const url = '/api/TickerClass';
 console.log(url);
 
-const backgroundColor_red = 'rgb(236, 171, 161)'
-const backgroundColor_green = 'rgb(177, 218, 178)'
+// Chart setup
+const Color_Red = 'rgb(236, 171, 161)'
+const Color_Green = 'rgb(177, 218, 178)'
 const chart_type = 'line';
 
-const x_name = 'DateTime';
-const y_name_1 = 'AAPL';
-const y_name_2 = 'MSFT';
-const y_name_3 = 'TEAM';
-const y_name_4 = 'TSLA';
+// Try fetch these values from Flask API
+const names = ['DateTime', 'AAPL', 'MSFT', 'TEAM', 'TSLA']
 
+// If Open value is greater than Close value line is green else red
+function colour_decider(y_data) {
+    if (y_data[0] > y_data[y_data.length - 1]) {
+        return Color_Red;
+    }
+    return Color_Green;
+}
 
+// fetch data from the server
 fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
 ).then(response => response.json()
 ).then(data => {
-    const x_label_date = data.map(function(d){ return d[x_name]})
-    const y_data_1 = data.map(function(d){ return d[y_name_1]})
-    const y_data_2 = data.map(function(d){ return d[y_name_2]})
-    const y_data_3 = data.map(function(d){ return d[y_name_3]})
-    const y_data_4 = data.map(function(d){ return d[y_name_4]})
 
+    // Parse the response data
+    const x_label_date = data.map(function(d){ return d[names[0]]});
+    const y_data_1 = data.map(function(d){ return d[names[1]]});
+    const y_data_2 = data.map(function(d){ return d[names[2]]});
+    const y_data_3 = data.map(function(d){ return d[names[3]]});
+    const y_data_4 = data.map(function(d){ return d[names[4]]});
 
-    let bgc_1 = backgroundColor_green;
-    let bgc_2 = backgroundColor_green;
-    let bgc_3 = backgroundColor_green;
-    let bgc_4 = backgroundColor_green;
+    // Get colour of each ticker value
+    let bgc_1 = colour_decider(y_data_1);
+    let bgc_2 = colour_decider(y_data_2);
+    let bgc_3 = colour_decider(y_data_3);
+    let bgc_4 = colour_decider(y_data_4);
 
-    if (y_data_1[0] > y_data_1[y_data_1.length-1]) {
-        bgc_1 = backgroundColor_red
-    }
-
-    if (y_data_2[0] > y_data_2[y_data_2.length-1]) {
-        bgc_2 = backgroundColor_red
-    }
-
-    if (y_data_3[0] > y_data_3[y_data_3.length-1]) {
-        bgc_3 = backgroundColor_red
-    }
-
-    if (y_data_4[0] > y_data_4[y_data_4.length-1]) {
-        bgc_4 = backgroundColor_red
-    }
 
     const chart_data_1 = {
         labels: x_label_date,
         datasets: [{
-            label: y_name_1,
+            label: names[1],
             backgroundColor: bgc_1,
             borderColor: bgc_1,
             data: y_data_1
@@ -57,7 +50,7 @@ fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
     const chart_data_2 = {
         labels: x_label_date,
         datasets: [{
-            label: y_name_2,
+            label: names[2],
             backgroundColor: bgc_2,
             borderColor: bgc_2,
             data: y_data_2
@@ -67,7 +60,7 @@ fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
     const chart_data_3 = {
         labels: x_label_date,
         datasets: [{
-            label: y_name_3,
+            label: names[3],
             backgroundColor: bgc_3,
             borderColor: bgc_3,
             data: y_data_3
@@ -77,7 +70,7 @@ fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
     const chart_data_4 = {
         labels: x_label_date,
         datasets: [{
-            label: y_name_4,
+            label: names[4],
             backgroundColor: bgc_4,
             borderColor: bgc_4,
             data: y_data_4
@@ -87,7 +80,7 @@ fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
 
     const cfg_1 = {
         type: chart_type,
-        data: chart_data_1
+        data: chart_data_1,
     };
 
     const cfg_2 = {
@@ -124,13 +117,5 @@ fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
         document.getElementById('AppChart4'),
         cfg_4
     )
-
-
-
 });
-
-setInterval( function () {
-    line_chart_1.update(cfg_1);
-    console.log('Update')
-}, 10000)
 

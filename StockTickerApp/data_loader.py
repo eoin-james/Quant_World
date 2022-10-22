@@ -1,9 +1,10 @@
 from csv import reader
 import click
+import sqlalchemy
 
 
 def data_importer(db, dm, file_path, dtypes: list):
-    # try:
+    try:
         with open(file_path) as fp:
             rd = reader(fp)
 
@@ -16,8 +17,8 @@ def data_importer(db, dm, file_path, dtypes: list):
                 db.session.add(record)
             db.session.commit()
             click.echo(click.style(f"Added {cnt} records in {dm.__name__}", fg="green"))
-    # except sqlalchemy.exc.IntegrityError:
-    #     click.echo(click.style(f"Could not load data in {dm.__name__}, UNIQUE constraint failed", fg="red"))
-    #     db.session.rollback()
-    # finally:
-    #     db.session.close()
+    except sqlalchemy.exc.IntegrityError:
+        click.echo(click.style(f"Could not load data in {dm.__name__}, UNIQUE constraint failed", fg="red"))
+        db.session.rollback()
+    finally:
+        db.session.close()

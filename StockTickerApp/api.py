@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from flask_restx import Api, Resource, fields
-from StockTickerApp.models import db, TickerClass
+from models import db, TickerClass
 
 blueprint = Blueprint('api', __name__)
 api = Api(blueprint)
