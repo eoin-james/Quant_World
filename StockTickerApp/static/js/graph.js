@@ -1,6 +1,6 @@
 // URL that queries graph data
-const url = '/api/TickerClass';
-console.log(url);
+const url_a = '/api/TickerClass';
+const url_b = '/api/LiveTickerClass'
 
 // Chart setup
 const Color_Red = 'rgb(236, 171, 161)'
@@ -19,26 +19,22 @@ function colour_decider(y_data) {
 }
 
 // fetch data from the server
-fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
+fetch(url_a, {method: 'GET', headers: {'Content-Type': 'application/json'}}
 ).then(response => response.json()
-).then(data => {
+).then(data_a => {
+    console.log(data_a)
 
     // Parse the response data
-    const x_label_date = data.map(function(d){ return d[names[0]]});
-    const y_data_1 = data.map(function(d){ return d[names[1]]});
-    const y_data_2 = data.map(function(d){ return d[names[2]]});
-    const y_data_3 = data.map(function(d){ return d[names[3]]});
-    const y_data_4 = data.map(function(d){ return d[names[4]]});
+    const x_label_data_a = data_a.map(function(d){ return d[names[0]]});
+    const y_data_1 = data_a.map(function(d){ return d[names[1]]});
+    const y_data_2 = data_a.map(function(d){ return d[names[2]]});
 
     // Get colour of each ticker value
     let bgc_1 = colour_decider(y_data_1);
     let bgc_2 = colour_decider(y_data_2);
-    let bgc_3 = colour_decider(y_data_3);
-    let bgc_4 = colour_decider(y_data_4);
-
 
     const chart_data_1 = {
-        labels: x_label_date,
+        labels: x_label_data_a,
         datasets: [{
             label: names[1],
             backgroundColor: bgc_1,
@@ -48,7 +44,7 @@ fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
     };
 
     const chart_data_2 = {
-        labels: x_label_date,
+        labels: x_label_data_a,
         datasets: [{
             label: names[2],
             backgroundColor: bgc_2,
@@ -56,27 +52,6 @@ fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
             data: y_data_2
         }]
     };
-
-    const chart_data_3 = {
-        labels: x_label_date,
-        datasets: [{
-            label: names[3],
-            backgroundColor: bgc_3,
-            borderColor: bgc_3,
-            data: y_data_3
-        }]
-    };
-
-    const chart_data_4 = {
-        labels: x_label_date,
-        datasets: [{
-            label: names[4],
-            backgroundColor: bgc_4,
-            borderColor: bgc_4,
-            data: y_data_4
-        }]
-    };
-
 
     const cfg_1 = {
         type: chart_type,
@@ -86,16 +61,6 @@ fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
     const cfg_2 = {
         type: chart_type,
         data: chart_data_2
-    };
-
-    const cfg_3 = {
-        type: chart_type,
-        data: chart_data_3
-    };
-
-    const cfg_4 = {
-        type: chart_type,
-        data: chart_data_4
     };
 
     const line_chart_1 = new Chart (
@@ -108,6 +73,55 @@ fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
         cfg_2
     )
 
+});
+
+// fetch data from the server
+fetch(url_b, {method: 'GET', headers: {'Content-Type': 'application/json'}}
+).then(response => response.json()
+).then(data_b => {
+
+    // Parse the response data
+    const x_label_data_b = data_b.map(function(d){ return d[names[0]]});
+
+    const y_data_3 = data_b.map(function(d){ return d[names[3]]});
+    const y_data_4 = data_b.map(function(d){ return d[names[4]]});
+
+    console.log(data_b);
+
+    // Get colour of each ticker value
+    let bgc_3 = colour_decider(y_data_3);
+    let bgc_4 = colour_decider(y_data_4);
+
+    const chart_data_3 = {
+        labels: x_label_data_b,
+        datasets: [{
+            label: names[3],
+            backgroundColor: bgc_3,
+            borderColor: bgc_3,
+            data: y_data_3
+        }]
+    };
+
+    const chart_data_4 = {
+        labels: x_label_data_b,
+        datasets: [{
+            label: names[4],
+            backgroundColor: bgc_4,
+            borderColor: bgc_4,
+            data: y_data_4
+        }]
+    };
+
+    const cfg_3 = {
+        type: chart_type,
+        data: chart_data_3
+    };
+
+    const cfg_4 = {
+        type: chart_type,
+        data: chart_data_4
+    };
+
     const line_chart_3 = new Chart (
         document.getElementById('AppChart3'),
         cfg_3
@@ -117,5 +131,5 @@ fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json'}}
         document.getElementById('AppChart4'),
         cfg_4
     )
-});
 
+});
