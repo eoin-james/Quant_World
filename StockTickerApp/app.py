@@ -1,63 +1,44 @@
 import os
-from flask import Flask, render_template
+
+from flask import Flask
 from flask_executor import Executor
 
-from api import blueprint
-from login import uri
-from models import db, TickerClass, LiveTickerClass
-from data_loader import data_importer, test_load
 
-from dev import market_state
+class AppClass:
+    """
+    This is an object wrapper for the Flask App - Since lots of Flask extensions are used this was designed to tidy up
+    the app functionality
+    """
+    def __init__(self, blueprint, uri, db):
 
-"""
-export FLASK_APP=StockTickerApp/app.py
-export FLASK_DEBUG=1    
-export FLASK_RUN_PORT=4444
-flask run
-"""
+        self.blueprint = blueprint
+        self.uri = uri
+        self.db = db
+        app, executor = self.setup()
+        self.app = app
+        self.executor = executor
 
-port = int(os.getenv('PORT', 4444))
+    def setup(self):
+        self.app = Flask(__name__)
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = self.uri
+        self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# App
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = uri
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        self.executor = Executor(self.app)
+        self.db.init_app(self.app)
 
-executor = Executor(app)
+        with self.app.app_context():
+            # Ensure all models are imported from other modules
+            self.db.create_all()
+        self.app.register_blueprint(self.blueprint, url_prefix="/api")
 
-# Initialise app with extension
-db.init_app(app)
-with app.app_context():
-    # Ensure all models are imported from other modules
-    db.create_all()
-app.register_blueprint(blueprint, url_prefix="/api")
+        return self.app, self.executor
 
+    def executor_submit(self, func, uri, tickers,  dt):
+        return self.executor.submit(func, uri, tickers,  dt)
 
-@app.route('/')
-def index():
-    if True:
-        executor.submit(live_data_loader)
-    return render_template('index.html')
-
-
-@app.cli.command('load-data')
-def load_data():
-    db.create_all()
-
-    test_load(db, LiveTickerClass,
-              'StockTickerApp/Data/test_data_2.csv',
-              [str, float, float, float, float]
-              )
+    def run(self, debug=True, port_num=4444):
+        os_port_num = port = int(os.getenv('PORT', port_num))
+        self.app.run(port=os_port_num, debug=debug)
 
 
-def live_data_loader():
-    test_load(db, LiveTickerClass, 'Data/test_data_2.csv', [str, float, float, float, float])
-
-
-def run_app():
-    app.run(debug=True, port=port)
-
-
-if __name__ == '__main__':
-    run_app()
 
