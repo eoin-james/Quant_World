@@ -13,27 +13,32 @@
 <script>
     const wait_time = '{{ wait_time }}';
     const market_status = '{{ market_status }}';
+    const tickers = ['{{ tickers[0] }}', '{{ tickers[1] }}', '{{ tickers[2] }}', '{{ tickers[3] }}'];
 </script>
+
+<p>Market Open Now: {{ market_status }}</p>
+<p>Data from: {{ date }}</p>
+<p>Showing data for {{ tickers|safe }}</p>
 
 <div class="row">
 
     <div class="col-md-4">
-        <canvas id="Chart1"  height="80"></canvas>
+        <canvas id="Chart1"  height="70"></canvas>
     </div>
 
     <div class="col-md-4">
-        <canvas id="Chart2"  height="80"></canvas>
+        <canvas id="Chart2"  height="70"></canvas>
     </div>
 
 </div>
 <div class="row">
 
     <div class="col-md-4">
-        <canvas id="Chart3"  height="80"></canvas>
+        <canvas id="Chart3"  height="70"></canvas>
     </div>
 
     <div class="col-md-4">
-        <canvas id="Chart4"  height="80"></canvas>
+        <canvas id="Chart4"  height="70"></canvas>
     </div>
 
 </div>

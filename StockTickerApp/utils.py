@@ -5,11 +5,6 @@ from datetime import datetime, timedelta
 import yfinance as yf
 from pandas import DataFrame
 
-from csv import reader
-import click
-import sqlalchemy
-import time
-
 import sys
 
 
@@ -51,12 +46,13 @@ def get_uri():
 
 
 def get_data(uri, tickers=None, dt=datetime.today()):
+    # TODO add try except
     if tickers is None:
         tickers = ['AAPL', 'MSFT', 'TEAM', 'TSLA']
-    print(tickers, file=sys.stderr)
     yf.pdr_override()
     data = yf.download(tickers, start=dt, interval='2m', rounding=2)
     close_data = data['Close'].reset_index(level=0)
     close_data.iloc[:, 0] = close_data.iloc[:, 0].apply(lambda x: str(x)[11:16])
     close_data = close_data.groupby('Datetime').first().reset_index()
     close_data.to_sql('ticker_class', uri, if_exists='replace', index=False)
+    # print(close_data[:, -1], file=sys.stderr)

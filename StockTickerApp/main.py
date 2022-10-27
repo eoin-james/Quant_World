@@ -1,4 +1,5 @@
 import sys
+import warnings
 
 from datetime import datetime, timedelta
 
@@ -10,36 +11,41 @@ from models import db, TickerClass, LiveTickerClass
 
 from flask import Flask, render_template, request
 
-wait_time = 2000
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+wait_time = 30000
 debug = True
 port_num = 4444
 market_status = market_state()
-# market_status = True
+if market_status:
+    dt = datetime.today().date()
+else:
+    dt = datetime.today().date() - timedelta(days=1)
+
 uri = get_uri()
 
 app = AppClass(blueprint, uri, db)
 
-tickers = None
+tickers = ['AAPL', 'MSFT', 'TEAM', 'TSLA']
 
 
-@app.app.route('/', methods=['GET', 'POST'])
+@app.app.route('/data', methods=['GET', 'POST'])
+def data_update():
+    app.executor_submit(get_data, uri, tickers, datetime.today().date())
+    return 'Updated data', 200
+
+
+@app.app.route('/')
 def index():
+    get_data(uri, tickers, dt)
 
-    if market_status:
-        # If market is open load current days ticker data then run function to maintain DB while app is running
-        dt = datetime.today()
-        app.executor_submit(get_data, uri, tickers, dt)
-    else:
-        # If market is closed, load the DB with the previous days ticker data then render_template after
-        dt = datetime.today().date() - timedelta(days=1)
-        get_data(uri, tickers, dt)
-
-    if request.method == 'GET':
-        return render_template(
-            'index.html',
-            market_status=market_status,
-            wait_time=wait_time
-        )
+    return render_template(
+        'index.html',
+        market_status=market_status,
+        wait_time=wait_time,
+        date=dt,
+        tickers=tickers
+    )
 
 
 if __name__ == '__main__':
