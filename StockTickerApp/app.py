@@ -9,8 +9,8 @@ class AppClass:
     This is an object wrapper for the Flask App - Since lots of Flask extensions are used this was designed to tidy up
     the app functionality
     """
-    def __init__(self, blueprint, uri, db):
 
+    def __init__(self, blueprint, uri, db):
         self.blueprint = blueprint
         self.uri = uri
         self.db = db
@@ -33,12 +33,9 @@ class AppClass:
 
         return self.app, self.executor
 
-    def executor_submit(self, func, uri, tickers,  dt):
-        return self.executor.submit(func, uri, tickers,  dt)
+    def executor_submit(self, func, uri, tickers, dt):
+        return self.executor.submit(func, uri, tickers, dt)
 
-    def run(self, debug=True, port_num=4444):
+    def run(self, debug: bool = True, port_num: int = 4444):
         os_port_num = port = int(os.getenv('PORT', port_num))
         self.app.run(port=os_port_num, debug=debug)
-
-
-
