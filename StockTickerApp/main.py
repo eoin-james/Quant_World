@@ -1,6 +1,9 @@
 import sys
 import warnings
 
+import pandas as pd
+from pandas.tseries.offsets import BDay
+
 from datetime import datetime, timedelta
 
 from app import AppClass
@@ -17,19 +20,21 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 wait_time = 30000  # 30 seconds
 debug = True  # Debug for Flask
 port_num = 4444  # Port for Flask
-# Checks if stock market is open and decides on a datetime for the APP to use
+
+# If market is open use current data else use last open days data
 market_status = market_state()
 if market_status:
-    dt = datetime.today().date()  # Today's stock data so far
+    dt = datetime.today().date()
 else:
-    # TODO: Make sure market was open 'yesterday' as could be a weekend etc
-    dt = datetime.today().date() - timedelta(days=1)  # Yesterdays stock data
+    # TODO: are BDays == MarketStatus
+    dt = datetime.today() - BDay(1)
+    dt = dt.date()
 
 uri = get_uri()  # DB login URI - See config/db_login.yaml for login details
 
 app = AppClass(blueprint, uri, db)  # Create an App Class - Wrapped as more than just Flask is used
 
-tickers = ['AAPL', 'MSFT', 'TEAM', 'TSLA']  # Set the stock data you want - Max 4 for now not tested on less than 4 yet
+tickers = ['AAPL', 'MSFT', 'TEAM', 'TSLA']
 
 
 @app.app.route('/data', methods=['GET', 'POST'])
