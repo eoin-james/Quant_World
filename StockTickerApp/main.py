@@ -10,14 +10,14 @@ from app import AppClass
 from utils import get_uri, market_state, get_data
 
 from api import blueprint
-from models import db, TickerClass, LiveTickerClass
+from db_models import db, TickerClass, LiveTickerClass
 
 from flask import Flask, render_template, request
 
 # Pandas warnings suppressed
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-wait_time = 30000  # 30 seconds
+chart_update_interval = 30000  # 30 seconds
 debug = True  # Debug for Flask
 port_num = 4444  # Port for Flask
 
@@ -59,7 +59,7 @@ def index():
     return render_template(
         'index.html',
         market_status=market_status,
-        wait_time=wait_time,
+        wait_time=chart_update_interval,
         date=dt,
         tickers=tickers
     )
