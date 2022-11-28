@@ -1,12 +1,12 @@
 import pandas
 import yfinance as yf
 
-from typing import Optional
+from typing import Union
 from pandas.tseries.offsets import BDay
 from datetime import datetime, timedelta
 
 
-def fetch_ticker_data(tickers: list, date: Optional[datetime, None] = None) -> pandas.DataFrame:
+def fetch_ticker_data(tickers: list, date: Union[datetime, None] = None) -> pandas.DataFrame:
     """
     Fetch data from yfinance for given date and tickers.
     :param tickers: List of tickers to download
